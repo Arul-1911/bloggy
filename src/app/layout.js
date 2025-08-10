@@ -1,5 +1,21 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+// import { Sidebar } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Poppins } from "next/font/google";
+import Navbar from "@/components/navbar";
+import AuthProvider from "@/components/providers/AuthProvider";
+import { Toaster } from "@/components/ui/sonner";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,11 +34,19 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html className="dark">
+      <body className={`${poppins.className} antialiased`}>
+        <AuthProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <main className="w-full">
+              <SidebarTrigger />
+              <Navbar />
+              {children}
+              <Toaster />
+            </main>
+          </SidebarProvider>
+        </AuthProvider>
       </body>
     </html>
   );
