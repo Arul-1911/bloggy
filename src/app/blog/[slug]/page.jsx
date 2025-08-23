@@ -1,73 +1,78 @@
 import dateFormat from "@/utils/dateFormat";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
+import "../../.././styles/blog.css";
 
-export default function SingleBlog() {
-  const tags = ["Backend", "Concurrency", "Go"];
-  const tempHtml = `
-  <p>Demo Html</p>
-  <h2>Test H2</h2>
-  `;
+const fetchSingleBlog = async (slug) => {
+  const data = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}api/v1/get/${slug}`,
+    { next: { revalidate: 6 } }
+  );
+  const res = await data.json();
+
+  return res;
+};
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+
+  const data = await fetchSingleBlog(slug);
+
+  return {
+    title: data.title,
+    description: data.excerpt,
+    openGraph: {
+      images: [data.thumbnail],
+    },
+  };
+}
+
+export default async function SingleBlog({ params }) {
+  const { slug } = await params;
+
+  const data = await fetchSingleBlog(slug);
+
   return (
     <section>
       <div className="flex flex-col gap-4 items-center justify-center">
-        <Image
-          src="https://mobisoftinfotech.com/resources/wp-content/uploads/2022/02/og-hire-golang-developers.png"
-          height={250}
-          width={500}
-          alt="Single Image"
-          className="rounded border sm:w-[80%] md:w-[700px] "
-        />
+        {data.thumbnail && (
+          <Image
+            src={data.thumbnail}
+            height={250}
+            width={500}
+            alt={data.title}
+            className="rounded border sm:w-[80%] md:w-[700px] "
+          />
+        )}
+        <h1 className="text-2xl md:text-4xl font-bold">{data.title}</h1>
         <div className="meta-of-a-blog space-y-2">
           <div className="flex gap-2 items-center">
             <Calendar className="text-gray-400 w-4 h-4" />
             <p className="text-gray-400 text-xs">
-              Created On: {dateFormat(new Date())}
+              Created On: {dateFormat(data.createdAt)}
             </p>
           </div>
           <div className="text-xs flex items-center gap-2">
             <p>Category:</p>
             <p className="badge border border-gray-700 bg-gray-600/30 w-fit px-2 py-1 rounded">
-              Golang Exploration
+              {data.category}
             </p>
           </div>
           <div className="text-xs flex items-center gap-2">
             <p>Tags:</p>
-            {tags?.map((tag, index) => (
-              <p className="badge border  border-gray-700 bg-gray-600/30 w-fit px-[4px] py-[2px] rounded">
-                {tag}
+            {data.keywords && (
+              <p>
+                {data.keywords.split(",").map((tag) => (
+                  <p className="badge bg-gray-600/30">{tag}</p>
+                ))}
               </p>
-            ))}
+            )}
           </div>
         </div>
-        {/* <div
-            className="content"
-            dangerouslySetInnerHTML={{ __html: tempHtml }}
-          ></div> */}
-        <p className="text-sm w-[90%] md:w-2/3  text-gray-300">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente
-          dignissimos culpa fugit adipisci vel maxime, praesentium error beatae
-          sit, numquam qui perspiciatis voluptates nemo quam iusto saepe
-          maiores, commodi molestias. Voluptatibus aperiam repellat aut? Nihil
-          omnis officia dolores, ad dolorem sint! Beatae quos odio omnis quam?
-          Suscipit pariatur quo corrupti nemo nihil quod tempora iste quibusdam
-          nobis ad repellat eos sit consequuntur minus vel veritatis quaerat
-          earum praesentium officiis, totam incidunt odio ex maiores est. Hic,
-          officiis nesciunt. Optio pariatur eum voluptatibus nisi! Mollitia
-          explicabo quasi dignissimos. Exercitationem dicta amet quidem, a
-          laborum similique facere provident iusto omnis ea nesciunt cum quis
-          cumque cupiditate neque ut nostrum porro, quod minima accusantium.
-          Error deserunt consequatur officia impedit a, temporibus ex nam
-          assumenda, aliquam molestias eaque quaerat eius eligendi. Animi, eaque
-          illum cumque soluta minus dignissimos odio harum, deleniti quisquam,
-          voluptates velit possimus fuga reiciendis impedit iure numquam aperiam
-          dolorem voluptas eius. Voluptatem est officia fuga facilis quae,
-          officiis sed alias iste at. Velit accusamus explicabo aut amet commodi
-          iste eligendi laborum, tempora tenetur, debitis aspernatur
-          consequuntur veritatis quidem, suscipit nostrum optio neque deleniti
-          recusandae officiis voluptatem ea soluta quo consequatur nihil? Modi
-          unde voluptatem quos perspiciatis vitae, tempore error tempora culpa.
-        </p>
+        <div
+          className="blogContent text-sm w-[90%] md:w-2/3  text-gray-300"
+          dangerouslySetInnerHTML={{ __html: data.content }}
+        ></div>
       </div>
     </section>
   );
