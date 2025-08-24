@@ -12,7 +12,7 @@ const fetchAllBlogs = async () => {
 export default async function Blogs() {
   const blogConfig = await fetchAllBlogs();
 
-  console.log(blogConfig, "blog config data");
+  // console.log(blogConfig, "blog config data");
 
   return (
     <section className="grid gap-3 grid-cols-2 md:grid-cols-3 p-8">

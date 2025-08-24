@@ -18,7 +18,7 @@ export default async function Navbar() {
   const session = await getAuthSession();
 
   return (
-    <div className="w-full flex justify-between px-8 h-12">
+    <div className="w-full flex justify-between items-center px-8 h-12">
       <Link href={"/"} className="flex gap-2">
         <Anvil /> <span className="font-extrabold">Bloggy</span>
       </Link>
@@ -40,7 +40,7 @@ const UserModalComponent = ({ user }) => {
       <DropdownMenuTrigger>
         <Image
           src={user?.image}
-          width={40}
+          width={35}
           height={40}
           alt={`${user.name}'s image `}
           className="rounded-full border-2 border-[greenyellow]"

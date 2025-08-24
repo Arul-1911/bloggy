@@ -1,12 +1,18 @@
 import dateFormat from "@/utils/dateFormat";
-import { Calendar } from "lucide-react";
+import { Calendar, Edit } from "lucide-react";
 import Image from "next/image";
 import "../../.././styles/blog.css";
+import Link from "next/link";
 
 const fetchSingleBlog = async (slug) => {
   const data = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}api/v1/get/${slug}`,
-    { next: { revalidate: 6 } }
+
+    {
+      next: {
+        tags: [slug],
+      },
+    }
   );
   const res = await data.json();
 
@@ -34,6 +40,11 @@ export default async function SingleBlog({ params }) {
 
   return (
     <section>
+      <div className="flex justify-end my-10 mx-15">
+        <Link href={`/draft/${slug}`}>
+          <Edit />
+        </Link>
+      </div>
       <div className="flex flex-col gap-4 items-center justify-center">
         {data.thumbnail && (
           <Image
