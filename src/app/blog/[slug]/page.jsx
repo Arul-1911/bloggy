@@ -3,6 +3,7 @@ import { Calendar, Edit } from "lucide-react";
 import Image from "next/image";
 import "../../.././styles/blog.css";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 const fetchSingleBlog = async (slug) => {
   const data = await fetch(
@@ -14,6 +15,10 @@ const fetchSingleBlog = async (slug) => {
       },
     }
   );
+
+  if (data.status === 404) {
+    notFound();
+  }
   const res = await data.json();
 
   return res;
