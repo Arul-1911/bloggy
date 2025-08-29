@@ -15,7 +15,7 @@ const Pagination = ({ currentPage, totalItems, perPage, ...props }) => {
   };
   return (
     <div {...props}>
-      <div className="flex gap-3 justify-end my-5 items-center">
+      <div className="flex gap-3 justify-center my-5 items-center">
         <Button
           variant="outline"
           disabled={currentPage === 1}
@@ -28,10 +28,9 @@ const Pagination = ({ currentPage, totalItems, perPage, ...props }) => {
           return (
             <Button
               className={`${
-                currentPage === index + 1 ? "bg-gray-600/90" : "bg-gray-100"
+                currentPage === index + 1 ? "bg-gray-100" : "bg-gray-100/40"
               }`}
               onClick={() => handlePageChange(index + 1)}
-              disabled={currentPage === index + 1}
             >
               {index + 1}
             </Button>

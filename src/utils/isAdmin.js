@@ -6,18 +6,16 @@ const listofAdmins = [
 
 export default async function isAdmin(session) {
   if (!session) return false;
+  let user = session.user.email.toLowerCase().trim();
+  console.log(user, "user email");
 
-  let emailMatch = listofAdmins.some((email) =>
-    email.toLowerCase().trim().includes(session.user.email.toLowerCase().trim())
-  );
+  // let emailMatch = listofAdmins.some((email) =>
+  //   email.toLowerCase().trim().includes(session.user.email.toLowerCase().trim())
+  // );
 
-  console.log(session?.user?.email);
+  let emailMatch = listofAdmins.includes(user);
 
-  if (
-    session.user.role === "admin" ||
-    (Boolean(session?.user?.email) && emailMatch)
-  ) {
-    return true;
-  }
-  return false;
+  // console.log(session?.user?.email);
+
+  return session.user.role === "admin" || emailMatch;
 }

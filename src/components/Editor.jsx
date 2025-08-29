@@ -68,6 +68,10 @@ export default function Editor({ onSave, initialData }) {
     }
   }, [initialData, setValue]);
 
+  useEffect(() => {
+    setValue("content", content);
+  }, [content, setValue]);
+
   return (
     <section>
       <form className="space-y-4" onSubmit={handleSubmit(handleForm)}>
@@ -100,7 +104,6 @@ export default function Editor({ onSave, initialData }) {
             "underline",
             "strike",
             "list",
-            "bullet",
             "link",
             "image",
             "code-block",

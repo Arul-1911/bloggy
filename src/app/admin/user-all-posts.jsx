@@ -1,11 +1,13 @@
 import Pagination from "@/components/pagination";
-import { getAllBlogs } from "../actions/getBlogs";
+import { getAllUserBlogs } from "../actions/getBlogs";
 import EditableBlogCards from "./EditableBlogCards";
 import { config } from "../../../static/config";
 import CategoryFilter from "@/components/category-filter";
 
-export default async function AdminAllPosts({ page, category }) {
-  const { posts, count } = await getAllBlogs({ page, category });
+export default async function UserAllPosts({ page, category }) {
+  const { posts, count } = await getAllUserBlogs({ page, category });
+
+  // console.log(posts, "posts");
 
   return (
     <section className="p-8 flex flex-col gap-4">

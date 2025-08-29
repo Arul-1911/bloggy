@@ -2,10 +2,10 @@
 
 import AuthForm from "@/components/authForm";
 
-export default function SignIn() {
+export default function SignUp() {
   return (
     <section className="w-full flex justify-center items-center h-screen">
-      <AuthForm />
+      <AuthForm origin="signup" />
     </section>
   );
 }
