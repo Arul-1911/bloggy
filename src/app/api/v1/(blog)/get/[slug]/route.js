@@ -20,8 +20,6 @@ export async function GET(request, { params }) {
     },
   });
 
-  console.log(post, "single post details");
-
   if (!post) {
     return NextResponse.json({ message: "Post not found!" }, { status: 404 });
   }

@@ -42,6 +42,7 @@ export default async function SingleBlog({ params }) {
   const { slug } = await params;
 
   const data = await fetchSingleBlog(slug);
+  // console.log(data);
 
   return (
     <section>
@@ -62,11 +63,26 @@ export default async function SingleBlog({ params }) {
         )}
         <h1 className="text-2xl md:text-4xl font-bold">{data.title}</h1>
         <div className="meta-of-a-blog space-y-2">
-          <div className="flex gap-2 items-center">
-            <Calendar className="text-gray-400 w-4 h-4" />
-            <p className="text-gray-400 text-xs">
-              Created On: {dateFormat(data.createdAt)}
-            </p>
+          <div className="flex gap-3 flex-col sm:flex-row">
+            <div className="flex gap-2 items-center">
+              <Calendar className="text-gray-400 w-4 h-4" />
+              <p className="text-gray-400 text-xs">
+                Created On: {dateFormat(data.createdAt)}
+              </p>
+            </div>
+            <Link
+              href={`/user/${data.author.username}`}
+              className="flex items-center gap-3"
+            >
+              <Image
+                src={data.author.image}
+                alt={data.author.name}
+                height={20}
+                width={20}
+                className="rounded-full"
+              />
+              <p>{data.author.name}</p>
+            </Link>
           </div>
           <div className="text-xs flex items-center gap-2">
             <p>Category:</p>
