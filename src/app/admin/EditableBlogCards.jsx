@@ -83,6 +83,9 @@ const EditableBlogCards = ({ post }) => {
               View
             </Button>
           )}
+          <Button onClick={() => router.push(`/draft/${post.slug}`)}>
+            Edit
+          </Button>
           <Trash
             size={18}
             className="text-gray-400 cursor-pointer"

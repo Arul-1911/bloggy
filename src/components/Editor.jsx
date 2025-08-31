@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,6 +10,19 @@ import { slugify } from "slugmaster";
 import ImageUpload from "./ImageUpload";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import AIContent from "@/utils/ai-content";
+import { Sparkles } from "lucide-react";
 
 const shcema = z.object({
   title: z.string().min(10, "Title should be more than 10 Characters"),
@@ -33,7 +46,15 @@ export default function Editor({ onSave, initialData }) {
 
   const [content, setContent] = useState("");
   const [ogImage, setOgImage] = useState("");
+  const [selectionExists, setSelectionExists] = useState(false);
   const router = useRouter();
+
+  const ideaRef = useRef(null);
+  const closeDialogRef = useRef(null);
+  const quillRef = useRef(null);
+
+  let customInstructions = "Generate content with proper facts";
+  let contentGen = true;
 
   const handleForm = (data) => {
     try {
@@ -52,6 +73,52 @@ export default function Editor({ onSave, initialData }) {
       }
     } catch (error) {
       console.error(error.message || "Error in saving post form");
+    }
+  };
+
+  const handleGenerateContent = async () => {
+    try {
+      const res = await AIContent({
+        text: ideaRef.current.value,
+        customInstructions,
+        contentGen,
+      });
+      // console.log(res, "response from AI in hadler func");
+
+      setContent(res);
+    } catch (error) {
+      console.error("failed to call handlegenrate function");
+    } finally {
+      closeDialogRef.current?.click();
+    }
+  };
+
+  const handleSelection = () => {
+    const selection = quillRef?.current?.getEditor()?.getSelection();
+    setSelectionExists(selection && selection?.length > 0);
+  };
+
+  const handlePhrase = async () => {
+    try {
+      const selection = quillRef?.current?.getEditor()?.getSelection();
+      if (selection && selection?.length > 0) {
+        const selectedText = quillRef?.current
+          ?.getEditor()
+          ?.getText(selection?.index, selection?.length);
+        const res = await AIContent({
+          text: selectedText,
+          customInstructions: "re-write this text",
+          contentGen: false,
+        });
+        quillRef?.current
+          ?.getEditor()
+          ?.deleteText(selection.index, selection.length);
+        quillRef?.current?.getEditor()?.insertText(selection.index, res);
+        setSelectionExists(false);
+      }
+    } catch (error) {
+      console.error(error.message);
+      toast("Oops !, something went wrong in rewriting the text");
     }
   };
 
@@ -84,8 +151,10 @@ export default function Editor({ onSave, initialData }) {
         {errors.title && <p className="text-red-500">{errors.title.message}</p>}
 
         <ReactQuill
+          ref={quillRef}
           value={content}
           onChange={setContent}
+          onChangeSelection={handleSelection}
           modules={{
             toolbar: [
               [{ header: "1" }, { header: "2" }, { header: "3" }],
@@ -112,6 +181,30 @@ export default function Editor({ onSave, initialData }) {
         {errors.content && (
           <p className="text-red-500">{errors.content.message}</p>
         )}
+
+        <Dialog>
+          <DialogTrigger className="flex gap-2 items-center border p-2 rounded-md">
+            Generate content using AI <Sparkles />
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogDescription>
+                Give a brief on the type of content you want to generate
+              </DialogDescription>
+              <textarea
+                ref={ideaRef}
+                rows={10}
+                className="p-2 rounded border-2 m-2"
+              />
+            </DialogHeader>
+            <DialogFooter>
+              <Button onClick={handleGenerateContent}>Generate</Button>
+              <DialogClose asChild ref={closeDialogRef}>
+                <Button variant="ghost">Close</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <input
           {...register("excerpt")}
@@ -177,6 +270,15 @@ export default function Editor({ onSave, initialData }) {
           </button>
         </div>
       </form>
+      {selectionExists && (
+        <Button
+          variant=""
+          className="fixed bottom-5 right-10"
+          onClick={handlePhrase}
+        >
+          Rewrite using AI <Sparkles />
+        </Button>
+      )}
     </section>
   );
 }

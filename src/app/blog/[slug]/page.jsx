@@ -87,17 +87,20 @@ export default async function SingleBlog({ params }) {
           <div className="text-xs flex items-center gap-2">
             <p>Category:</p>
             <p className="badge border border-gray-700 bg-gray-600/30 w-fit px-2 py-1 rounded">
-              {data.category}
+              {/* {JSON.stringify(data)} */}
+              {data.category || "Uncategorized"}
             </p>
           </div>
           <div className="text-xs flex items-center gap-2">
-            <p>Tags:</p>
             {data.keywords && (
-              <p>
-                {data.keywords.split(",").map((tag) => (
-                  <p className="badge bg-gray-600/30">{tag}</p>
-                ))}
-              </p>
+              <>
+                <p>Tags:</p>
+                <p className="badge flex gap-3 ">
+                  {data.keywords.split(",").map((tag) => (
+                    <p className="bg-gray-600/30 rounded p-1">{tag}</p>
+                  ))}
+                </p>
+              </>
             )}
           </div>
         </div>
