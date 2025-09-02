@@ -32,7 +32,7 @@ export default function ImageUpload({ returnImage, preLoadedImage }) {
       const data = await res.json();
       setImgUrl(data.secure_url);
       returnImage(data.secure_url || imgUrl);
-      console.log("Uploaded to Cloudinary successfully");
+      // console.log("Uploaded to Cloudinary successfully");
     } catch (error) {
       console.error("Image upload error:", error);
     } finally {

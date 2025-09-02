@@ -33,7 +33,9 @@ export async function generateMetadata({ params }) {
     title: data.title,
     description: data.excerpt,
     openGraph: {
-      images: [data.thumbnail],
+      images: [
+        `${process.env.NEXT_PUBLIC_BASE_URL}api/og/title?=${data.title}`,
+      ],
     },
   };
 }
